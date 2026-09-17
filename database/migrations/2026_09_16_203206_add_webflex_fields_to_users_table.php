@@ -12,16 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-         $table->uuid('uuid')->unique();
-         $table->string('lastname',100)->nullable();
-         $table->string('phone', 30)->nullable();
-         $table->string('is_active', 10)->nullable();
-         $table->foreignId('role_id')
+            $table->uuid('uuid')->after('id')->unique();
+            $table->string('lastname', 100)->after('name')->nullable();
+            $table->string('phone', 30)->after('lastname')->nullable();
+            $table->string('is_active', 10)->after('phone')->nullable();
+            $table->foreignId('role_id')
                 ->nullable()
                 ->after('is_active')
                 ->constrained('roles')
                 ->nullOnDelete();
-
             $table->softDeletes();
         });
     }
@@ -32,7 +31,16 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+            $table->dropForeign(['role_id']);
+
+            $table->dropColumn([
+                'uuid',
+                'lastname',
+                'phone',
+                'is_active',
+                'role_id',
+                'deleted_at',
+            ]);
         });
     }
 };
