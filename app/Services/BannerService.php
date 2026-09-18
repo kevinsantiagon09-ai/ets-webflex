@@ -3,14 +3,18 @@
 namespace App\Services;
 
 use App\Models\Banner;
+use App\Models\User;
 use Illuminate\Support\Str;
 
 class BannerService
 {
-    public function create(array $data): Banner
+    /**
+     * @param  array{estado_id: int|string, image_path: string, titulo: string}  $data
+     */
+    public function create(array $data, User $user): Banner
     {
-        $data['uuid'] = Str::uuid();
-        $data['user_id'] = auth()->id();
+        $data['uuid'] = (string) Str::uuid();
+        $data['user_id'] = $user->id;
 
         return Banner::create($data);
     }

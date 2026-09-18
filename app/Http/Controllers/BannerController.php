@@ -2,66 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreBannerRequest;
+use App\Services\BannerService;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Http\Request;
 
 class BannerController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Mostrar la vista principal del administrador.
      */
     public function index(): Response
     {
-        return Inertia::render('Banners/Index');
-    
+        return Inertia::render('layouts/Admin');
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Guardar un nuevo banner.
      */
-    public function create()
-    {
-        //
-    }
+    public function store(
+        StoreBannerRequest $request,
+        BannerService $bannerService
+    ): RedirectResponse {
+        $bannerService->create(
+            $request->validated(),
+            $request->user()
+        );
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return to_route('admin')
+            ->with('success', 'El banner fue creado correctamente.');
     }
 }
