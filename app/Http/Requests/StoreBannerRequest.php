@@ -12,7 +12,7 @@ class StoreBannerRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user() !== null;
     }
 
     /**
@@ -23,7 +23,25 @@ class StoreBannerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'estado_id' => ['bail', 'required', 'integer', 'exists:estados,id'],
+            'image_path' => ['bail', 'required', 'string', 'max:255'],
+            'titulo' => ['bail', 'required', 'string', 'max:150'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'estado_id.required' => 'Selecciona un estado.',
+            'estado_id.integer' => 'El estado seleccionado no es válido.',
+            'estado_id.exists' => 'El estado seleccionado no existe.',
+            'image_path.required' => 'Ingresa la ruta de la imagen.',
+            'image_path.max' => 'La ruta de la imagen no puede superar los 255 caracteres.',
+            'titulo.required' => 'Ingresa un título.',
+            'titulo.max' => 'El título no puede superar los 150 caracteres.',
         ];
     }
 }

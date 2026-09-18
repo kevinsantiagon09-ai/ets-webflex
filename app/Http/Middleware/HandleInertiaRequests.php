@@ -8,20 +8,27 @@ use Inertia\Middleware;
 class HandleInertiaRequests extends Middleware
 {
     /**
-     * Plantilla Blade principal de Inertia.
+     * Plantilla Blade principal que carga Inertia.
+     *
+     * Corresponde a:
+     * resources/views/layouts/inertia.blade.php
      */
-    protected $rootView = 'app';
+    protected $rootView = 'layouts.inertia';
 
     /**
      * Determina la versión actual de los assets.
      */
     public function version(Request $request): ?string
     {
+        
         return parent::version($request);
     }
 
     /**
-     * Datos compartidos con todas las páginas de Inertia.
+     * Datos compartidos globalmente con todas
+     * las páginas de Inertia.
+     *
+     * @return array<string, mixed>
      */
     public function share(Request $request): array
     {
@@ -33,11 +40,8 @@ class HandleInertiaRequests extends Middleware
             ],
 
             'flash' => [
-                'success' => fn () =>
-                    $request->session()->get('success'),
-
-                'error' => fn () =>
-                    $request->session()->get('error'),
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
             ],
         ];
     }
