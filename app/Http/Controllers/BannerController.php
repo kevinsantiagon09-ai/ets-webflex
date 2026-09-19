@@ -10,17 +10,16 @@ use Inertia\Response;
 
 class BannerController extends Controller
 {
-    /**
-     * Mostrar la vista principal del administrador.
-     */
     public function index(): Response
     {
         return Inertia::render('layouts/Admin');
     }
 
-    /**
-     * Guardar un nuevo banner.
-     */
+    public function create(): Response
+    {
+        return Inertia::render('banners/Create');
+    }
+
     public function store(
         StoreBannerRequest $request,
         BannerService $bannerService

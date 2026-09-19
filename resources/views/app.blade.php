@@ -15,7 +15,8 @@
         WebFlex
     </title>
 
-    @vite('resources/js/app.js')
+    @viteReactRefresh
+    @vite('resources/js/inertia.tsx')
 
     @inertiaHead
 

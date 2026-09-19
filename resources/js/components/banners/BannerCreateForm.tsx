@@ -1,47 +1,154 @@
-import { useForm } from '@inertiajs/react'
-import type { FormEvent } from 'react'
-import type { BannerFormData } from '../../types/banner'
+import { FormEvent } from 'react';
+import { useForm } from '@inertiajs/react';
 
-const initialValues: BannerFormData = {
-    estado_id: '',
-    image_path: '',
-    titulo: '',
-}
+type Estado = {
+    id: number;
+    nombre?: string;
+};
 
-export default function BannerCreateForm(): React.JSX.Element {
-    const form = useForm<BannerFormData>(initialValues)
+type Props = {
+    estados?: Estado[];
+};
 
-    function submit(event: FormEvent<HTMLFormElement>): void {
-        event.preventDefault()
+export default function BannerCreateForm({
+    estados = [],
+}: Props) {
 
-        form.post('/admin/banners', {
-            onSuccess: () => form.reset(),
-        })
-    }
+    const {
+        data,
+        setData,
+        post,
+        processing,
+        errors,
+        reset,
+    } = useForm({
+        titulo: '',
+        estado_id: '',
+        image: null as File | null,
+    });
+
+    const submit = (e: FormEvent) => {
+        e.preventDefault();
+
+        post('/admin/banners', {
+            forceFormData: true,
+
+            onSuccess: () => {
+                reset();
+            },
+        });
+    };
 
     return (
-        <form className="grid gap-5" noValidate onSubmit={submit}>
-            <div className="grid gap-2">
-                <label className="text-sm font-medium text-slate-700" htmlFor="titulo">Título</label>
-                <input aria-describedby={form.errors.titulo ? 'titulo-error' : undefined} aria-invalid={Boolean(form.errors.titulo)} className="rounded-md border border-slate-300 px-3 py-2 outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-600/20" id="titulo" name="titulo" onChange={(event) => form.setData('titulo', event.target.value)} value={form.data.titulo} />
-                {form.errors.titulo && <p className="text-sm text-red-600" id="titulo-error">{form.errors.titulo}</p>}
+        <form
+            onSubmit={submit}
+            className="space-y-6 rounded-xl bg-white p-6 shadow"
+        >
+
+            {/* Título */}
+            <div>
+                <label
+                    htmlFor="titulo"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                >
+                    Título del banner
+                </label>
+
+                <input
+                    id="titulo"
+                    type="text"
+                    value={data.titulo}
+                    onChange={(e) =>
+                        setData('titulo', e.target.value)
+                    }
+                    className="w-full rounded-lg border border-gray-300 px-4 py-2"
+                    placeholder="Ej: Bienvenido a WebFlex"
+                />
+
+                {errors.titulo && (
+                    <p className="mt-1 text-sm text-red-600">
+                        {errors.titulo}
+                    </p>
+                )}
             </div>
 
-            <div className="grid gap-2">
-                <label className="text-sm font-medium text-slate-700" htmlFor="image_path">Ruta de imagen</label>
-                <input aria-describedby={form.errors.image_path ? 'image-path-error' : undefined} aria-invalid={Boolean(form.errors.image_path)} className="rounded-md border border-slate-300 px-3 py-2 outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-600/20" id="image_path" name="image_path" onChange={(event) => form.setData('image_path', event.target.value)} value={form.data.image_path} />
-                {form.errors.image_path && <p className="text-sm text-red-600" id="image-path-error">{form.errors.image_path}</p>}
+            {/* Estado */}
+            <div>
+                <label
+                    htmlFor="estado_id"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                >
+                    Estado
+                </label>
+
+                <select
+                    id="estado_id"
+                    value={data.estado_id}
+                    onChange={(e) =>
+                        setData('estado_id', e.target.value)
+                    }
+                    className="w-full rounded-lg border border-gray-300 px-4 py-2"
+                >
+                    <option value="">
+                        Selecciona un estado
+                    </option>
+
+                    {estados.map((estado) => (
+                        <option
+                            key={estado.id}
+                            value={estado.id}
+                        >
+                            {estado.nombre ?? `Estado ${estado.id}`}
+                        </option>
+                    ))}
+                </select>
+
+                {errors.estado_id && (
+                    <p className="mt-1 text-sm text-red-600">
+                        {errors.estado_id}
+                    </p>
+                )}
             </div>
 
-            <div className="grid gap-2">
-                <label className="text-sm font-medium text-slate-700" htmlFor="estado_id">ID del estado</label>
-                <input aria-describedby={form.errors.estado_id ? 'estado-id-error' : undefined} aria-invalid={Boolean(form.errors.estado_id)} className="rounded-md border border-slate-300 px-3 py-2 outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-600/20" id="estado_id" min="1" name="estado_id" onChange={(event) => form.setData('estado_id', event.target.value)} type="number" value={form.data.estado_id} />
-                {form.errors.estado_id && <p className="text-sm text-red-600" id="estado-id-error">{form.errors.estado_id}</p>}
+            {/* Imagen */}
+            <div>
+                <label
+                    htmlFor="image"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                >
+                    Imagen del banner
+                </label>
+
+                <input
+                    id="image"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                        setData(
+                            'image',
+                            e.target.files?.[0] ?? null
+                        )
+                    }
+                    className="w-full rounded-lg border border-gray-300 px-4 py-2"
+                />
+
+                {errors.image && (
+                    <p className="mt-1 text-sm text-red-600">
+                        {errors.image}
+                    </p>
+                )}
             </div>
 
-            <button className="w-fit rounded-md bg-sky-700 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-800 disabled:cursor-not-allowed disabled:bg-slate-400" disabled={form.processing} type="submit">
-                {form.processing ? 'Guardando…' : 'Crear banner'}
+            <button
+                type="submit"
+                disabled={processing}
+                className="rounded-lg bg-slate-900 px-5 py-2 text-white disabled:opacity-50"
+            >
+                {processing
+                    ? 'Guardando...'
+                    : 'Guardar banner'}
             </button>
+
         </form>
-    )
+    );
 }

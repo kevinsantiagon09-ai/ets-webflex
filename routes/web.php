@@ -7,8 +7,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/banner', [BannerController::class, 'index'])
+    ->name('banner.index');
 
-Route::get('/banner', [BannerController::class, 'index'])->name('banner.index');
+Route::get('/admin', [BannerController::class, 'index'])
+    ->name('admin');
 
-Route::get('/admin', [BannerController::class, 'index'])->name('admin');
-Route::post('/admin/banners', [BannerController::class, 'store'])->name('banners.store');
+Route::get('/admin/banners/create', [BannerController::class, 'create'])
+    ->name('banners.create');
+
+Route::post('/admin/banners', [BannerController::class, 'store'])
+    ->name('banners.store');

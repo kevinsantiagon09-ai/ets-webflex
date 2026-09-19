@@ -3,10 +3,16 @@ import { createInertiaApp } from '@inertiajs/react'
 import { createRoot } from 'react-dom/client'
 
 createInertiaApp({
-    title: title => `CashTrackr - ${title}`,
-    pages: {
-        path: './pages',
-        extension: '.tsx',
+    title: (title) => (title ? `${title} - WebFlex` : 'WebFlex'),
+    resolve: (name) => {
+        const pages = import.meta.glob('./pages/**/*.tsx')
+        const page = pages[`./pages/${name}.tsx`]
+
+        if (!page) {
+            throw new Error(`Page not found: ${name}`)
+        }
+
+        return page()
     },
     setup({ el, App, props }) {
         if (el) {
