@@ -17,7 +17,9 @@
     "dependencies": {
         "@inertiajs/react": "^3.7.1",
         "react": "^19.3.0",
-        "react-dom": "^19.3.0"
+        "react-dom": "^19.3.0",
+        "react-dropzone": "^20.1.2",
+        "sweetalert2": "^11.26.25"
     },
     "optionalDependencies": {
         "@laravel/multiplex": "^0.4.1"

@@ -20,9 +20,8 @@
 </head>
 
 <body>
-<p class="text-center text-sm text-gray-500 mt-5">ETS Webflex 237 v{{ config('app.version') }}</p>   
     
-    <div class="mt-5 w-full">
+    <div class="w-full">
       <x-inertia::app />
     </div>
 </body>

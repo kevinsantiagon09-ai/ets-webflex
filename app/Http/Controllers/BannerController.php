@@ -19,7 +19,7 @@ class BannerController extends Controller
 
         return Inertia::render('layouts/Admin', [
             'settingsUrl' => route('settings.store'),
-            'setting' => $setting?->only(['primary_color', 'text_color', 'button_color', 'font_family']),
+            'setting' => $setting?->only(['site_name', 'primary_color', 'text_color', 'button_color', 'font_family']),
             'logoUrl' => $setting?->logo_path ? Storage::disk('public')->url($setting->logo_path) : null,
             'logoutUrl' => route('logout'),
             'estados' => Estado::select('id', 'activo', 'inactivo')->get(),

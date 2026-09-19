@@ -13,6 +13,7 @@ class SettingFactory extends Factory
     public function definition(): array
     {
         return [
+            'site_name' => 'Mi sitio web',
             'uuid' => fake()->uuid(),
             'user_id' => User::factory(),
             'primary_color' => '#0f172a',

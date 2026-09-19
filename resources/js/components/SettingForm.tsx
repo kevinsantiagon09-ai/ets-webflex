@@ -1,8 +1,9 @@
 import { useForm } from '@inertiajs/react';
-import { useRef } from 'react';
+import ImageDropzone from './ImageDropzone';
 import type { FormEvent } from 'react';
 
 export type SettingData = {
+    site_name: string | null;
     primary_color: string | null;
     text_color: string | null;
     button_color: string | null;
@@ -16,8 +17,8 @@ type Props = {
 };
 
 export default function SettingForm({ setting, settingsUrl, logoUrl }: Props) {
-    const logoInput = useRef<HTMLInputElement>(null);
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors, clearErrors } = useForm({
+        site_name: setting?.site_name ?? 'ETS WebFlex',
         primary_color: setting?.primary_color ?? '#0f172a',
         text_color: setting?.text_color ?? '#334155',
         button_color: setting?.button_color ?? '#0f172a',
@@ -32,9 +33,6 @@ export default function SettingForm({ setting, settingsUrl, logoUrl }: Props) {
             preserveScroll: true,
             onSuccess: () => {
                 setData('logo', null);
-                if (logoInput.current) {
-                    logoInput.current.value = '';
-                }
             },
         });
     };
@@ -48,9 +46,14 @@ export default function SettingForm({ setting, settingsUrl, logoUrl }: Props) {
     return (
         <form onSubmit={submit} noValidate className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="text-xl font-semibold text-slate-900">Configuración del sitio</h2>
-            <p className="mt-2 text-sm text-slate-600">Define los colores, la tipografía y el logo de tu sitio.</p>
+            <p className="mt-2 text-sm text-slate-600">Define el nombre, el logo y la apariencia de tu sitio.</p>
 
             <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="sm:col-span-2 lg:col-span-3">
+                    <label htmlFor="site_name" className="mb-2 block text-sm font-medium text-slate-700">Nombre del sitio web</label>
+                    <input id="site_name" type="text" value={data.site_name} onChange={(event) => setData('site_name', event.target.value)} aria-invalid={Boolean(errors.site_name)} aria-describedby={errors.site_name ? 'site-name-error' : undefined} className="w-full rounded-lg border border-slate-300 px-3 py-3" />
+                    {errors.site_name && <p id="site-name-error" role="alert" className="mt-2 text-sm text-red-600">{errors.site_name}</p>}
+                </div>
                 {colors.map(([field, label]) => (
                     <div key={field}>
                         <label htmlFor={field} className="mb-2 block text-sm font-medium text-slate-700">{label}</label>
@@ -71,11 +74,8 @@ export default function SettingForm({ setting, settingsUrl, logoUrl }: Props) {
                 </div>
 
                 <div className="sm:col-span-2">
-                    <label htmlFor="logo" className="mb-2 block text-sm font-medium text-slate-700">Logo</label>
-                    <input ref={logoInput} id="logo" type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => setData('logo', event.target.files?.[0] ?? null)} aria-invalid={Boolean(errors.logo)} aria-describedby={errors.logo ? 'logo-help logo-error' : 'logo-help'} className="w-full rounded-lg border border-slate-300 p-3 text-sm" />
-                    <p id="logo-help" className="mt-2 text-xs text-slate-500">JPG, PNG o WEBP. Máximo 2 MB. Si no seleccionas otro archivo, conservaremos el logo actual.</p>
-                    {errors.logo && <p id="logo-error" role="alert" className="mt-2 text-sm text-red-600">{errors.logo}</p>}
-                    {logoUrl && <img src={logoUrl} alt="Logo actual del sitio" className="mt-4 h-16 max-w-full object-contain" />}
+                    <ImageDropzone id="logo" label="Logo del sitio" value={data.logo} onChange={(file) => { setData('logo', file); clearErrors('logo'); }} error={errors.logo} disabled={processing} existingUrl={logoUrl} />
+                    <p className="mt-2 text-xs text-slate-500">Si no seleccionas otro archivo, conservaremos el logo actual.</p>
                 </div>
             </div>
 

@@ -16,6 +16,7 @@ class SaveSettingRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'site_name' => ['required', 'string', 'max:150'],
             'primary_color' => ['required', 'string', 'regex:/^#[a-fA-F0-9]{6}$/'],
             'text_color' => ['required', 'string', 'regex:/^#[a-fA-F0-9]{6}$/'],
             'button_color' => ['required', 'string', 'regex:/^#[a-fA-F0-9]{6}$/'],
@@ -28,6 +29,8 @@ class SaveSettingRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'site_name.required' => 'Ingresa el nombre del sitio web.',
+            'site_name.max' => 'El nombre no puede superar los 150 caracteres.',
             '*.required' => 'Este campo es obligatorio.',
             '*.regex' => 'Ingresa un color hexadecimal de 6 dígitos, como #0f172a.',
             'font_family.in' => 'Selecciona una fuente válida.',

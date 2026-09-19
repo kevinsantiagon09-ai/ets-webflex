@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 
 type Props = {
@@ -7,6 +7,7 @@ type Props = {
 };
 
 export default function Login({ loginUrl, homeUrl }: Props) {
+    const { site } = usePage<{ site: { name: string; logoUrl: string | null } }>().props;
     const { data, setData, post, processing, errors, reset } = useForm({ email: '', password: '' });
 
     const submit = (event: FormEvent<HTMLFormElement>) => {
@@ -15,19 +16,19 @@ export default function Login({ loginUrl, homeUrl }: Props) {
     };
 
     return (
-        <main className="flex min-h-[calc(100svh-4rem)] w-full items-center justify-center bg-slate-50 px-4 py-10 text-slate-900 dark:bg-slate-950 dark:text-white">
-            <Head title="Iniciar sesión" />
+        <main className="flex min-h-svh w-full items-center justify-center bg-slate-50 px-4 py-10 text-slate-900 dark:bg-slate-950 dark:text-white">
+            <Head title={`Iniciar sesión - ${site.name}`} />
 
             <div className="flex w-full max-w-sm flex-col gap-6">
                 <section aria-labelledby="login-title" className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-900/5 sm:p-8 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
                     <header className="flex flex-col items-center gap-3 text-center">
-                        <div className="flex size-12 items-center justify-center rounded-xl bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900">
+                        {site.logoUrl ? <img src={site.logoUrl} alt={site.name} className="h-14 max-w-full object-contain" /> : <div className="flex size-12 items-center justify-center rounded-xl bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900">
                             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="size-6">
                                 <rect x="5" y="10" width="14" height="11" rx="2" />
                                 <path strokeLinecap="round" d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3" />
                             </svg>
-                        </div>
-                        <p className="text-xs font-semibold tracking-widest text-slate-500 dark:text-slate-400">ETS WEBFLEX</p>
+                        </div>}
+                        <p className="text-xs font-semibold tracking-widest text-slate-500 dark:text-slate-400">{site.name}</p>
                         <div className="flex flex-col gap-2">
                             <h1 id="login-title" className="text-2xl font-semibold tracking-tight">Iniciar sesión</h1>
                             <p className="text-sm leading-6 text-slate-500 dark:text-slate-400">Accede para administrar tu sitio web.</p>

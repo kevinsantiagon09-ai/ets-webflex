@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { useForm } from '@inertiajs/react';
+import ImageDropzone from '../ImageDropzone';
 
 type Estado = {
     id: number;
@@ -22,6 +23,7 @@ export default function BannerCreateForm({
         post,
         processing,
         errors,
+        clearErrors,
         reset,
     } = useForm({
         titulo: '',
@@ -184,40 +186,7 @@ export default function BannerCreateForm({
 
                 {/* IMAGEN */}
                 <div className="mb-6">
-                    <label
-                        htmlFor="image"
-                        className="mb-2 block text-sm font-medium text-slate-700"
-                    >
-                        Imagen del banner
-                    </label>
-
-                    <input
-                        id="image"
-                        name="image"
-                        type="file"
-                        accept="image/png,image/jpeg,image/jpg,image/webp"
-                        onChange={(e) =>
-                            setData(
-                                'image',
-                                e.target.files?.[0] ?? null
-                            )
-                        }
-                        className="
-                            w-full
-                            rounded-lg
-                            border
-                            border-slate-300
-                            bg-white
-                            p-3
-                            text-sm
-                        "
-                    />
-
-                    {errors.image && (
-                        <p className="mt-1 text-sm text-red-600">
-                            {errors.image}
-                        </p>
-                    )}
+                    <ImageDropzone id="image" label="Imagen del banner" value={data.image} onChange={(file) => { setData('image', file); clearErrors('image'); }} error={errors.image} disabled={processing} />
                 </div>
 
                 {/* BOTÓN */}

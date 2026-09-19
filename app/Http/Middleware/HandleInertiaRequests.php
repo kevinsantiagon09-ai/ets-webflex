@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -20,7 +22,7 @@ class HandleInertiaRequests extends Middleware
      */
     public function version(Request $request): ?string
     {
-        
+
         return parent::version($request);
     }
 
@@ -35,6 +37,18 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
 
+            'site' => function (): array {
+                $setting = Setting::query()->oldest('id')->first();
+
+                return [
+                    'name' => $setting?->site_name ?: 'ETS WebFlex',
+                    'primaryColor' => $setting?->primary_color ?: '#0f172a',
+                    'textColor' => $setting?->text_color ?: '#334155',
+                    'buttonColor' => $setting?->button_color ?: '#0f172a',
+                    'logoUrl' => $setting?->logo_path ? Storage::disk('public')->url($setting->logo_path) : null,
+                ];
+            },
+
             'auth' => [
                 'user' => $request->user(),
             ],
@@ -42,6 +56,7 @@ class HandleInertiaRequests extends Middleware
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
+                'info' => fn () => $request->session()->get('info'),
             ],
         ];
     }

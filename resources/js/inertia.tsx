@@ -3,7 +3,7 @@ import { createInertiaApp } from '@inertiajs/react'
 import { createRoot } from 'react-dom/client'
 
 createInertiaApp({
-    title: (title) => (title ? `${title} - WebFlex` : 'WebFlex'),
+    title: (title) => title,
     resolve: (name) => {
         const pages = import.meta.glob('./pages/**/*.tsx')
         const page = pages[`./pages/${name}.tsx`]

@@ -65,6 +65,7 @@ class SettingControllerTest extends TestCase
         $this->actingAs($this->createAdmin())->get(route('admin'))
             ->assertInertia(fn (Assert $page) => $page
                 ->component('layouts/Admin')
+                ->where('setting.site_name', $setting->site_name)
                 ->where('setting.primary_color', $setting->primary_color)
                 ->where('setting.font_family', $setting->font_family)
                 ->where('settingsUrl', route('settings.store')));
@@ -95,6 +96,33 @@ class SettingControllerTest extends TestCase
         $this->assertDatabaseCount('settings', 0);
     }
 
+    public function test_public_pages_receive_the_site_name_and_logo_without_internal_fields(): void
+    {
+        Setting::factory()->create(['site_name' => 'Mi empresa', 'logo_path' => 'logos/company.png']);
+
+        foreach (['home', 'login'] as $route) {
+            $this->get(route($route))->assertInertia(fn (Assert $page) => $page
+                ->where('site.name', 'Mi empresa')
+                ->where('site.primaryColor', '#0f172a')
+                ->where('site.textColor', '#334155')
+                ->where('site.buttonColor', '#0f172a')
+                ->where('site.logoUrl', Storage::disk('public')->url('logos/company.png'))
+                ->missing('site.user_id'));
+        }
+    }
+
+    public function test_site_name_is_required_and_limited_in_length(): void
+    {
+        $this->actingAs($this->createAdmin());
+
+        $this->post(route('settings.store'), [...$this->settingsData(), 'site_name' => ''])
+            ->assertInvalid(['site_name' => 'Ingresa el nombre del sitio web.']);
+        $this->post(route('settings.store'), [...$this->settingsData(), 'site_name' => str_repeat('a', 151)])
+            ->assertInvalid(['site_name' => 'El nombre no puede superar los 150 caracteres.']);
+
+        $this->assertDatabaseCount('settings', 0);
+    }
+
     private function createAdmin(): User
     {
         $this->seed(RoleSeeder::class);
@@ -108,6 +136,6 @@ class SettingControllerTest extends TestCase
     /** @return array<string, string> */
     private function settingsData(): array
     {
-        return ['primary_color' => '#112233', 'text_color' => '#223344', 'button_color' => '#334455', 'font_family' => 'Arial'];
+        return ['site_name' => 'Empresa de ejemplo', 'primary_color' => '#112233', 'text_color' => '#223344', 'button_color' => '#334455', 'font_family' => 'Arial'];
     }
 }
