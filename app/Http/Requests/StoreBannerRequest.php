@@ -20,15 +20,28 @@ class StoreBannerRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
-    {
-        return [
-            'estado_id' => ['bail', 'required', 'integer', 'exists:estados,id'],
-            'image_path' => ['bail', 'required', 'string', 'max:255'],
-            'titulo' => ['bail', 'required', 'string', 'max:150'],
-        ];
-    }
+ public function rules(): array
+{
+    return [
+        'titulo' => [
+            'required',
+            'string',
+            'max:150',
+        ],
 
+        'estado_id' => [
+            'required',
+            'exists:estados,id',
+        ],
+
+        'image' => [
+            'required',
+            'image',
+            'mimes:jpg,jpeg,png,webp',
+            'max:2048',
+        ],
+    ];
+}
     /**
      * @return array<string, string>
      */

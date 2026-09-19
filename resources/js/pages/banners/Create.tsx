@@ -1,21 +1,28 @@
-import BannerCreateForm from '../../components/banners/BannerCreateForm';
+import BannerCreateForm
+    from '../../components/banners/BannerCreateForm';
 
-export default function Create() {
+type Estado = {
+    id: number;
+    activo: number;
+    inactivo: number;
+};
+
+type Props = {
+    estados: Estado[];
+};
+
+export default function Create({ estados }: Props) {
     return (
-        <div className="mx-auto max-w-2xl p-6">
+        <main className="min-h-screen bg-slate-100 p-8">
+            <div className="mx-auto max-w-7xl">
 
-            <div className="mb-6">
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-3xl font-bold">
                     Crear Banner
                 </h1>
 
-                <p className="mt-1 text-sm text-gray-600">
-                    Configura el banner que aparecerá en tu página web.
-                </p>
+                <BannerCreateForm estados={estados} />
+
             </div>
-
-            <BannerCreateForm />
-
-        </div>
+        </main>
     );
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBannerRequest;
+use App\Models\Estado;
 use App\Services\BannerService;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -16,9 +17,17 @@ class BannerController extends Controller
     }
 
     public function create(): Response
-    {
-        return Inertia::render('banners/Create');
-    }
+{
+    $estados = Estado::select(
+        'id',
+        'activo',
+        'inactivo'
+    )->get();
+
+    return Inertia::render('banners/Create', [
+        'estados' => $estados,
+    ]);
+}
 
     public function store(
         StoreBannerRequest $request,
